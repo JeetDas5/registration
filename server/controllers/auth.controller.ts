@@ -1,13 +1,18 @@
 import bcrypt from "bcryptjs";
+import { ZodError } from "zod";
 import { Request, Response } from "express";
 
 import User from "../models/user.model";
 import { generateToken } from "../utils/jwt";
 import { AuthRequest } from "../middlewares/auth.middleware";
 
+import { registerSchema, loginSchema } from "../validations/auth.validations";
+
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { name, dob, email, password } = req.body;
+    const validatedData = registerSchema.parse(req.body);
+
+    const { name, dob, email, password } = validatedData;
 
     const existingUser = await User.findOne({ email });
 
@@ -39,6 +44,12 @@ export const registerUser = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: "Validation Error",
+        errors: error.issues[0].message,
+      });
+    }
     return res.status(500).json({
       message: "Failed to register user",
       error,
@@ -48,7 +59,9 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const validatedData = loginSchema.parse(req.body);
+
+    const { email, password } = validatedData;
 
     const user = await User.findOne({ email });
 
@@ -79,6 +92,12 @@ export const loginUser = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: "Validation Error",
+        errors: error.issues[0].message,
+      });
+    }
     return res.status(500).json({
       message: "Failed to login user",
       error,
