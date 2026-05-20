@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only server.ts",
+    "dev": "nodemon --watch . --ext ts --exec bun server.ts",
+    "prebuild": "NODE_ENV=development bun install",
     "build": "tsc",
     "start": "node dist/server.js"
   },
@@ -22,6 +23,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.2",
+    "nodemon": "^3.1.14",
     "zod": "^4.4.3"
   },
   "devDependencies": {
