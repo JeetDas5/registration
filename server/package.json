@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon --watch . --ext ts --exec bun server.ts",
     "prebuild": "NODE_ENV=development bun install",
