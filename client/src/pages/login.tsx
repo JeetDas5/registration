@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import API from "../api/axios";
+import { AxiosError } from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,8 +33,12 @@ const Login = () => {
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
+      if (error instanceof AxiosError) {
+        const errorMessage = error.response?.data?.message || error.message;
+        toast.error(errorMessage);
+        return;
+      }
       if (error instanceof Error) {
-        console.error(error.message);
         toast.error("An unexpected error occurred. Please try again.");
         return;
       }

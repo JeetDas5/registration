@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { users } from "../data";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -11,49 +15,6 @@ const Dashboard = () => {
 
     navigate("/login");
   };
-
-  const users = [
-    {
-      id: 1,
-      name: "Michael Holz",
-      dateCreated: "04/10/2013",
-      role: "Admin",
-      status: "Active",
-      avatar: "https://i.pravatar.cc/150?u=michael",
-    },
-    {
-      id: 2,
-      name: "Paula Wilson",
-      dateCreated: "05/08/2014",
-      role: "Publisher",
-      status: "Active",
-      avatar: "https://i.pravatar.cc/150?u=paula",
-    },
-    {
-      id: 3,
-      name: "Antonio Moreno",
-      dateCreated: "11/05/2015",
-      role: "Publisher",
-      status: "Suspended",
-      avatar: "https://i.pravatar.cc/150?u=antonio",
-    },
-    {
-      id: 4,
-      name: "Mary Saveley",
-      dateCreated: "06/09/2016",
-      role: "Reviewer",
-      status: "Active",
-      avatar: "https://i.pravatar.cc/150?u=mary",
-    },
-    {
-      id: 5,
-      name: "Martin Sommer",
-      dateCreated: "12/08/2017",
-      role: "Moderator",
-      status: "Inactive",
-      avatar: "https://i.pravatar.cc/150?u=martin",
-    },
-  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -68,9 +29,21 @@ const Dashboard = () => {
     }
   };
 
+  // Pagination logic
+  const totalUsers = users.length;
+  const totalPages = Math.ceil(totalUsers / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentUsers = users.slice(startIndex, endIndex);
+
+  const goToPage = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-[#005f73] via-[#0a9396] to-[#00acb0] p-6 sm:p-10 relative overflow-hidden">
-      {/* Ambient background decorative glow */}
+    <div className="min-h-screen bg-linear-to-tr from-[#005f73] via-[#0a9396] to-[#00acb0] p-6 sm:p-10 relative overflow-hidden">
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#00ffd2]/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#0a9396]/20 blur-[120px] pointer-events-none" />
 
@@ -111,7 +84,7 @@ const Dashboard = () => {
               </thead>
 
               <tbody>
-                {users.map((u) => (
+                {currentUsers.map((u) => (
                   <tr
                     key={u.id}
                     className="border-b border-slate-700/40 hover:bg-[#252d43]/50 text-slate-200 transition-colors"
@@ -173,29 +146,50 @@ const Dashboard = () => {
             </table>
           </div>
 
-          {/* Pagination */}
           <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4 text-sm text-slate-400">
-            <div>Showing 5 out of 25 entries</div>
+            <div>
+              Showing <span className="font-semibold text-slate-200">{startIndex + 1}</span> to{" "}
+              <span className="font-semibold text-slate-200">{Math.min(endIndex, totalUsers)}</span> of{" "}
+              <span className="font-semibold text-slate-200">{totalUsers}</span> entries
+            </div>
             <div className="flex items-center gap-1">
-              <button className="px-3 py-1 hover:text-white transition-colors cursor-pointer">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 transition-colors ${
+                  currentPage === 1
+                    ? "opacity-40 cursor-not-allowed hover:text-slate-400"
+                    : "hover:text-white cursor-pointer"
+                }`}
+              >
                 Previous
               </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
-                1
-              </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
-                2
-              </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded-sm bg-[#00f5d4] text-[#121824] font-bold shadow-[0_2px_8px_rgba(0,245,212,0.4)] cursor-pointer">
-                3
-              </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
-                4
-              </button>
-              <button className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
-                5
-              </button>
-              <button className="px-3 py-1 hover:text-white transition-colors cursor-pointer">
+              {Array.from({ length: totalPages }, (_, index) => {
+                const pageNumber = index + 1;
+                const isActive = pageNumber === currentPage;
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => goToPage(pageNumber)}
+                    className={`w-7 h-7 flex items-center justify-center rounded-sm transition-colors ${
+                      isActive
+                        ? "bg-[#00f5d4] text-[#121824] font-bold shadow-[0_2px_8px_rgba(0,245,212,0.4)] cursor-pointer"
+                        : "hover:bg-slate-700 hover:text-white text-slate-400 cursor-pointer"
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 transition-colors ${
+                  currentPage === totalPages
+                    ? "opacity-40 cursor-not-allowed hover:text-slate-400"
+                    : "hover:text-white cursor-pointer"
+                }`}
+              >
                 Next
               </button>
             </div>
@@ -207,5 +201,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
