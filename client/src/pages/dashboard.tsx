@@ -29,7 +29,6 @@ const Dashboard = () => {
     }
   };
 
-  // Pagination logic
   const totalUsers = users.length;
   const totalPages = Math.ceil(totalUsers / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
