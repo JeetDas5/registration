@@ -29,7 +29,7 @@ const Register = () => {
       const res = await API.post("/auth/register", formData);
 
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("user", JSON.stringify(res.data.data));
 
       toast.success("Registration successful!");
       navigate("/dashboard");
