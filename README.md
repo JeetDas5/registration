@@ -1,4 +1,4 @@
-# Registration and Dashboard Portal
+# Registration Portal with Dashboard
 
 This project is a premium full-stack registration and login application featuring a modern glassmorphic dashboard interface, dynamic front-end pagination, validation schemas, and descriptive error messaging.
 
@@ -37,7 +37,7 @@ This project is a premium full-stack registration and login application featurin
 - Node.js
 - Express
 - TypeScript
-- MongoDB / Mongoose
+- MongoDB (Mongoose ORM)
 - Zod
 - JWT (jsonwebtoken)
 - bcryptjs
@@ -48,8 +48,8 @@ This project is a premium full-stack registration and login application featurin
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher) or Bun installed on your machine.
-- Access to a MongoDB database (local or MongoDB Atlas).
+- Node.js (v18 or higher) or Bun.
+- MongoDB database (local or MongoDB Atlas).
 
 ### Project Structure
 
@@ -340,4 +340,4 @@ Retrieves the profile data of the currently logged-in user.
       ```
 
 
-Built with ❤️ by [Jeet Das](https://github.com/JeetDas5)
+Built with ❤️ for Quantum IT Innovation by [Jeet Das](https://github.com/JeetDas5)
